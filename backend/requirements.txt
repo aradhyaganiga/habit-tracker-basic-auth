@@ -6,3 +6,4 @@ SQLAlchemy==2.0.23
 bcrypt==4.1.2
 cryptography==46.0.5
 python-dotenv
+gunicorn
