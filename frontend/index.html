@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Streak Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-text">🔥 Habit Streak</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="user-display" class="text-sm text-gray-600 dark:text-gray-300 font-medium"></span>
+                    <button id="logout-btn" class="text-sm text-gray-600 dark:text-gray-300 hover:text-red-500 font-medium">
+                        Logout
+                    </button>
+                    <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" id="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300 hidden" id="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="total-habits">0</div>
+                <div class="stat-label">Total Habits</div>
+            </div>
+            <div class="stat-card bg-gradient-to-br from-orange-500 to-red-600">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="longest-streak">0</div>
+                <div class="stat-label">Longest Streak</div>
+            </div>
+            <div class="stat-card bg-gradient-to-br from-green-500 to-teal-600">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completion-percentage">0%</div>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+            <div class="stat-card bg-gradient-to-br from-blue-500 to-indigo-600">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value" id="consistency-score">0</div>
+                <div class="stat-label">Consistency Score</div>
+            </div>
+        </div>
+
+        <!-- Add Habit Section -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Add New Habit</h2>
+            <form id="add-habit-form" class="space-y-4">
+                <div>
+                    <input 
+                        type="text" 
+                        id="habit-name" 
+                        placeholder="Habit name (e.g., Morning Meditation)"
+                        class="input-field"
+                        required
+                    >
+                </div>
+                <div>
+                    <input 
+                        type="text" 
+                        id="habit-description" 
+                        placeholder="Description (optional)"
+                        class="input-field"
+                    >
+                </div>
+                <button type="submit" class="btn-primary">
+                    Add Habit
+                </button>
+            </form>
+        </div>
+
+        <!-- Habits List -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">My Habits</h2>
+            <div id="habits-list" class="space-y-3">
+                <!-- Habits will be loaded here -->
+            </div>
+            <div id="empty-state" class="text-center py-12 hidden">
+                <div class="text-6xl mb-4">📝</div>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">No habits yet. Add your first habit above!</p>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">📈 Analytics</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Streak Growth Chart -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Streak Growth (Last 30 Days)</h3>
+                    <canvas id="streak-chart"></canvas>
+                </div>
+
+                <!-- Weekly Completion Chart -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Weekly Completion</h3>
+                    <canvas id="weekly-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Completed vs Missed -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Completed vs Missed (Last 30 Days)</h3>
+                    <canvas id="pie-chart"></canvas>
+                </div>
+
+                <!-- Heatmap -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Activity Heatmap (Last 90 Days)</h3>
+                    <div id="heatmap-container" class="overflow-x-auto">
+                        <!-- Heatmap will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
