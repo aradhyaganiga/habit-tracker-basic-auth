@@ -4,12 +4,16 @@ from functools import wraps
 from models import db, User, Habit, HabitLog
 from datetime import datetime, timedelta
 import bcrypt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 
 # Configuration
 app.config['SECRET_KEY'] = 'your-secret-key-12345678901234567890'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:#Aradhya007@localhost/habit_tracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize
